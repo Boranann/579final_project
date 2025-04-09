@@ -1,0 +1,175 @@
+/*That leaflet tutorial asks for a bit of CSS. That would go here!*/
+.container-fluid {
+  display: flex;
+  gap: 30px;
+  align-items: flex-end;
+}
+
+.search-bar {
+  display: flex;
+  flex-grow: 1;
+  gap: 10px;
+}
+
+#search {
+  width: 45%;
+  height: 37px;
+  font-size: 15px;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.mt-2 {
+  margin: 20px 0px 10px 20px;
+}
+
+h1 {
+  font-size: 2.5em;
+  margin: 20px 0px 10px 20px;
+}
+
+h2 {
+  font-size: 2em;
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 1.5em;
+  margin-bottom: 5px;
+}
+
+.d-flex > div {
+  flex-grow: 1;
+}
+
+.d-flex h3, .position-relative p, .d-flex small {
+  font-family: monospace;
+}
+
+.d-flex h3 {
+  font-size: 2em;
+}
+.d-flex small {
+  font-size: 1em;
+  margin: 0px 0px 10px 0px;
+}
+
+p{
+  margin:10px 0px;
+  font-size: 1.3em;
+  line-height: 1.2em;
+}
+
+.book {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin: 0px 20px;
+}
+
+#map {
+  height: 80vh;
+  width: 62vw;
+  grid-column: 1/span 2;
+}
+
+.btn {
+  background-color: #c3c3bf;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+#place1 {
+  color:white;
+  background-color: #7c3608;
+}
+
+#place2 {
+  color:white;
+  background-color: #198754;
+}
+
+#place3 {
+  background-color: #a8ccda;
+}
+
+#place4 {
+  background-color: #ffc107;
+}
+
+#place5 {
+  color:white;
+  background-color: #db3d1af1;
+}
+
+#place6 {
+  color: white;
+  background-color: #0d6efd;
+}
+
+form{
+  /* background-color: #d3f3d9; */
+  padding:15px 20px 15px 15px;
+  margin:0px 15px 0px 0px;
+}
+
+.col-sm-6,.col-12{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+
+.form-label {
+  font-size: 1.2em;
+  margin: 10px 0px;
+}
+
+.text-muted{
+  color:#6c757d;
+  font-size: 1em;
+  margin: 5px 0px 0px 0px;
+}
+
+.form-control {
+  width: 80%;
+  font-size: 15px;
+  padding: 5px 10px;
+  margin: 0px 0px 5px 0px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+input[type="text"] {
+  font-family: monospace;
+}
+
+.invalid-feedback {
+  font-size: 0.8em;
+  color: red;
+}
+
+#memory-container {
+  margin-right:15px;
+}
+
+
+body {
+  background: rgb(68, 94, 219);
+  background: radial-gradient(circle, rgba(167, 219, 166, 0.737) 0%, rgba(87, 152, 238, 0.359) 100%);
+}
+
+/* .close-button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+  } */

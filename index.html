@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>My travel story</title>
+  <link rel="stylesheet" href="css/html5reset.css">
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body>
+  <header class="container">
+  </header>
+  <nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+      <h1 class="col">✨My travel story</h1>
+      <div class="search-bar">
+        <input class="form-control me-2" type="search" placeholder="Search for places by format 'latitude,longitude'..." id="search"
+          aria-label="Search" autocomplete="off" />
+        <button class="btn btn-outline-success" type="button" id="search-btn">Search</button>
+      </div>
+    </div>
+    <div class="container-fluid mt-2">
+      <button class="btn btn-outline-secondary" type="button" id="place1">Shanghai</button>
+      <button class="btn btn-outline-secondary" type="button" id="place2">Munich</button>
+      <button class="btn btn-outline-secondary" type="button" id="place3">Ann Arbor</button>
+      <button class="btn btn-outline-secondary" type="button" id="place4">Vienna</button>
+      <button class="btn btn-outline-secondary" type="button" id="place5">Barcelona</button>
+      <button class="btn btn-outline-secondary" type="button" id="place6">Orlando</button>
+      <!-- <button class="btn btn-outline-secondary" type="button" id="place7">Add...</button> -->
+    </div>
+
+  </nav>
+  <main class="book">
+
+    <div id="map"></div>
+    <div id="memory">
+      <h2 class="mt-4 p-2 bg-white text-center">⭐🦄🌈Stories🌈🦄⭐</h2>
+      <!-- <button class="btn btn-outline-secondary" type="button" id="add">Add Story</button> -->
+      <div id="memory-container">
+      </div>
+      <form class="needs-validation bg-light p-4" novalidate="">
+        <h3>Add A Story</h3>
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" placeholder="" value="" required="" autocomplete="off" />
+            <small class="text-muted">Required and be 1 word</small>
+            <div class="invalid-feedback" hidden>
+              Title is required and must be one word.
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <label for="date" class="form-label">Date of story</label>
+            <input type="date" class="form-control" id="date" placeholder="" value="" required="">
+            <small class="text-muted">Required and can't be a date used by one of the stories below</small>
+            <div class="invalid-feedback" hidden>
+              Date is required and can't be a date of an existing story.
+            </div>
+          </div>
+
+          <div class="col-12">
+            <!-- <div class="form-group"> -->
+            <label for="description" class="form-label">Description of your story</label>
+            <textarea class="form-control" id="description" rows="3" autocomplete="off"></textarea>
+            <small class="text-muted">Required</small>
+            <div class="invalid-feedback" hidden>
+              Description is required.
+            </div>
+            <!-- </div> -->
+          </div>
+          <button type="button" class="btn btn-primary mt-3" id="add-memory">Add Story</button>
+      </form>
+
+    </div>
+
+  </main>
+  <script src="js/leaflet-quickstart.js" defer></script>
+  <script src="js/script.js" defer></script>
+</body>
+
+</html>
