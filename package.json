@@ -1,0 +1,37 @@
+{
+  "name": "lec8",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "cy:open",
+    "start": "node ./scripts/start.js",
+    "cy:run": "cypress run --browser=chrome",
+    "cy:basic": "cypress run --spec ./cypress/e2e/e2eTest.cy.js",
+    "cy:stretch": "cypress run --spec ./cypress/e2e/stretch.cy.js",
+    "cy:runcode": "cypress run --env theport=10000",
+    "cy:run:component": "cypress run --component",
+    "cy:open": "./node_modules/.bin/cypress open",
+    "local:open": "start-test 8080 cy:open",
+    "local:run": "start-test 8080 cy:run",
+    "codespace:test": "export PORT=10000 && start-test 10000 cy:runcode",
+    "local:basic": "start-test 8080 cy:basic",
+    "local:stretch": "start-test 8080 cy:stretch",
+    "local:run:record": "start-test 8080 cy:run:record",
+    "lint:js": "eslint js/script.js ",
+    "lint": "npm run lint:js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^12.17.4",
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "eslint-plugin-no-for-loop": "file:eslint-plugin-no-for-loop",
+    "eslint": "^8.56.0",
+    "eslint-plugin-unicorn": "^50.0.1",
+    "serve": "^14.0.1",
+    "start-server-and-test": "^1.14.0"
+  }
+}
