@@ -21,8 +21,8 @@
     <div class="container-fluid">
       <h1 class="col">✨My travel story</h1>
       <div class="search-bar">
-        <input class="form-control me-2" type="search" placeholder="Search for places by format 'latitude,longitude'..." id="search"
-          aria-label="Search" autocomplete="off" />
+        <input class="form-control me-2" type="search" placeholder="Search for places by format 'latitude,longitude'..."
+          id="search" aria-label="Search" autocomplete="off" />
         <button class="btn btn-outline-success" type="button" id="search-btn">Search</button>
       </div>
     </div>
@@ -40,28 +40,28 @@
   <main class="book">
 
     <div id="map"></div>
-    <div id="memory">
+    <div id="story">
       <h2 class="mt-4 p-2 bg-white text-center">⭐🦄🌈Stories🌈🦄⭐</h2>
-      <!-- <button class="btn btn-outline-secondary" type="button" id="add">Add Story</button> -->
-      <div id="memory-container">
+      <div id="story-container">
       </div>
-      <form class="needs-validation bg-light p-4" novalidate="">
+      <!-- <button class="btn btn-outline-secondary" type="button" id="add-form-button">Add Story</button> -->
+      <form class="needs-validation bg-light p-4" novalidate="" id ="story-form" hidden>
         <h3>Add A Story</h3>
         <div class="row g-3">
           <div class="col-sm-6">
             <label for="title" class="form-label">Title</label>
             <input type="text" class="form-control" id="title" placeholder="" value="" required="" autocomplete="off" />
-            <small class="text-muted">Required and be 1 word</small>
-            <div class="invalid-feedback" hidden>
-              Title is required and must be one word.
+            <small class="text-muted">Required</small>
+            <div class="invalid-feedback" id="title-feedback" hidden>
+              Title is required.
             </div>
           </div>
           <div class="col-sm-6">
             <label for="date" class="form-label">Date of story</label>
             <input type="date" class="form-control" id="date" placeholder="" value="" required="">
-            <small class="text-muted">Required and can't be a date used by one of the stories below</small>
-            <div class="invalid-feedback" hidden>
-              Date is required and can't be a date of an existing story.
+            <small class="text-muted">Required</small>
+            <div class="invalid-feedback" id="date-feedback" hidden>
+              Date is required.
             </div>
           </div>
 
@@ -70,13 +70,17 @@
             <label for="description" class="form-label">Description of your story</label>
             <textarea class="form-control" id="description" rows="3" autocomplete="off"></textarea>
             <small class="text-muted">Required</small>
-            <div class="invalid-feedback" hidden>
+            <div class="invalid-feedback" id="description-feedback" hidden>
               Description is required.
             </div>
             <!-- </div> -->
           </div>
-          <button type="button" class="btn btn-primary mt-3" id="add-memory">Add Story</button>
-      </form>
+
+          <div class="col-button">
+          <button type="button" class="btn btn-primary mt-3" id="add-story">Add Story</button>
+          <button type="button" class="btn btn-secondary mt-3" id="cancel-add-story" clicked="false">Cancel</button>
+          </div>
+        </form>
 
     </div>
 
