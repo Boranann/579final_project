@@ -45,7 +45,7 @@ const renderStory = (coordinate) => {
           <small class="px-1 text-muted align-self-center">${formatDateForStory(story.date)}</small>
         </div>
         <p>${story.description}</p>
-        <button type="button" data-date="${story.date}" class="btn btn-primary mt-3">Delete Story</button>
+        <button type="button" data-coordinate="${story.coordinate}" class="btn btn-primary mt-3">Delete Story</button>
       </div>`;
     });
   }
@@ -161,9 +161,10 @@ addStoryButton.addEventListener('click', () => {
  * render the updated list
  */
 storyContainer.addEventListener('click', (e) => {
-  if (e.target.hasAttribute('data-date')) {
-    const date = Number(e.target.getAttribute('data-date'));
-    storyList = storyList.filter(story => story.date !== date);
+  if (e.target.hasAttribute('data-coordinate')) {
+    const dataCoordinate = e.target.getAttribute('data-coordinate');
+    console.log('aaaaa', dataCoordinate);
+    storyList = storyList.filter(story => story.coordinate !== dataCoordinate);
     renderStory(coordinate);
     renderMarkers();
   }
