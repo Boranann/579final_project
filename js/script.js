@@ -163,7 +163,6 @@ addStoryButton.addEventListener('click', () => {
 storyContainer.addEventListener('click', (e) => {
   if (e.target.hasAttribute('data-coordinate')) {
     const dataCoordinate = e.target.getAttribute('data-coordinate');
-    console.log('aaaaa', dataCoordinate);
     storyList = storyList.filter(story => story.coordinate !== dataCoordinate);
     renderStory(coordinate);
     renderMarkers();
