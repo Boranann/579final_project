@@ -1,3 +1,4 @@
+/** set the map variable*/
 var map = L.map('map').setView([40, 0], 2);
 
 /** setup the map */
@@ -11,17 +12,22 @@ const storyContainer = document.querySelector('#story-container');
 const titleInput = document.querySelector("#title");
 const dateInput = document.querySelector("#date");
 const descriptionInput = document.querySelector("#description");
+const imageInput = document.querySelector("#imageUrl");
 const addStoryButton = document.querySelector("#add-story");
 const searchButton = document.querySelector("#search-btn");
 const storyForm = document.querySelector("#story-form");
 const cancelButton = document.querySelector("#cancel-add-story");
 const markers = [];
 
-let storyList = localStorage.getItem('story.list') ? JSON.parse(localStorage.getItem('story.list')) : [];
-
+let tempMarker = null; // marker for the current location
+let storyList = localStorage.getItem('story.list') ? JSON.parse(localStorage.getItem('story.list')) : defaultEntries;
 let coordinate = '';
 
 /**
+ * This is a function
+ *
+ * @param {string} coordinate
+ *
  * Renders the story list.
  * when no stories are present, show the form to add a new story
  * when stories are present, show the list of stories and hide the form
@@ -29,8 +35,8 @@ let coordinate = '';
  */
 const renderStory = (coordinate) => {
   storyContainer.innerHTML = '';
-  /** sort the coordinate */
-  // const sortedMemories = storyList.sort((a, b) => a.date - b.date);
+  storyForm.setAttribute('hidden', '');
+  /** sort the stored story based on the coordinate */
   const sortedMemories = storyList.filter(story => story.coordinate == coordinate);
   if (sortedMemories.length === 0) {
     storyForm.removeAttribute('hidden');
@@ -44,13 +50,17 @@ const renderStory = (coordinate) => {
           <h3>${story.title}</h3>
           <small class="px-1 text-muted align-self-center">${formatDateForStory(story.date)}</small>
         </div>
-        <p>${story.description}</p>
-        <button type="button" data-coordinate="${story.coordinate}" class="btn btn-primary mt-3">Delete Story</button>
+        <p>${story.description}</p>`;
+        if (story.imageUrl) {
+          storyContainer.innerHTML +=
+            `<img src=${story.imageUrl} alt="Image for ${story.title}">`
+        };
+      storyContainer.innerHTML +=
+      `<button type="button" data-coordinate="${story.coordinate}" class="btn btn-primary mt-3">Delete Story</button>
       </div>`;
     });
   }
 }
-
 
 /**
  * This is a function
@@ -60,7 +70,6 @@ const renderStory = (coordinate) => {
  * Should be called on initial load
  * and anytime markers are changed.
  */
-
 const renderMarkers = () => {
   storyForm.setAttribute('hidden', '');
   localStorage.setItem('story.list', JSON.stringify(storyList));
@@ -76,16 +85,33 @@ const renderMarkers = () => {
   });
 }
 
+/**
+ * This is a function
+ *
+ * Show Location and temporary marker on map
+ *
+ * @param {number} latitude
+ * @param {number} longitude
+ * @param {string} name
+ */
 const findLocation = (latitude, longitude, name = "") => {
   map.setView([latitude, longitude], 5);
-  const marker = L.marker([latitude, longitude])
+  if (tempMarker) {
+    map.removeLayer(tempMarker);
+  }
+  tempMarker = L.marker([latitude, longitude])
     .addTo(map)
     .bindPopup(`<b>${name || `[${latitude}, ${longitude}]`} found!</b>`)
     .openPopup();
-  markers.push(marker);
-
 };
 
+/**
+ * Implement the search function
+ * Split the input string by comma and convert to number
+ * Check if the input is valid
+ * If valid, set the coordinate and call findLocation function
+ * If invalid, alert the user
+ */
 searchButton.addEventListener("click", () => {
   const searchInput = document.querySelector("#search").value.trim();
   const coordinates = searchInput.split(',').map(Number);
@@ -102,17 +128,42 @@ searchButton.addEventListener("click", () => {
  * Cancel adding a new story
  * This also function as deletion of the marker by rendering the markers again
  */
-
 cancelButton.addEventListener('click', () => {
+  if (tempMarker) {
+    map.removeLayer(tempMarker);
+    tempMarker = null;
+  }
   renderMarkers();
 })
 
+/**
+ * Takes the value of a date input and formats it in the manner required by the story list.
+ *
+ * @param {string} dateString
+ *   The date input value.
+ * @return {string}
+ *   The date formatted like "Monday, Mar 3, 2003".
+ */
+const formatDateForStory = (dateString) =>
+  new Date(dateString).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "short", day: "numeric" })
+
+/**
+ * Converts a date string into a timestamp that accounts for the current time zone.
+ *
+ * @param {string} dateString
+ *   The value of a date input.
+ *
+ * @return {number}
+ *   A JS-friendly millisecond timestamp.
+ */
+const localizedTimestamp = (dateString) =>
+  new Date(dateString).getTime() + new Date(dateString).getTimezoneOffset() * 60000
 
 /**Check whether the form meets condition and ready to submit
+ * title, date and description are required
+ * imageUrl is optional
  * store story in story list and render the list
  * reset the form fields
- * @todo add key: coordinates to the story object when adding a new story
- * @todo perhaps adding pictures
  */
 addStoryButton.addEventListener('click', () => {
   if (titleInput.value === '') {
@@ -147,11 +198,19 @@ addStoryButton.addEventListener('click', () => {
       title: titleInput.value,
       date: localizedTimestamp(dateInput.value),
       description: descriptionInput.value,
-      coordinate: coordinate
+      coordinate: coordinate,
+      imageUrl: imageInput.value
     });
+
+    if (tempMarker) {
+      map.removeLayer(tempMarker);
+      tempMarker = null;
+    }
+
     titleInput.value = '';
     dateInput.value = '';
     descriptionInput.value = '';
+    imageInput.value = '';
     renderStory(coordinate);
     renderMarkers();
   }

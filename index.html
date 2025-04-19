@@ -66,14 +66,18 @@
           </div>
 
           <div class="col-12">
-            <!-- <div class="form-group"> -->
             <label for="description" class="form-label">Description of your story</label>
             <textarea class="form-control" id="description" rows="3" autocomplete="off"></textarea>
             <small class="text-muted">Required</small>
             <div class="invalid-feedback" id="description-feedback" hidden>
               Description is required.
             </div>
-            <!-- </div> -->
+          </div>
+
+          <div class="col-sm-6">
+            <label for="imageUrl" class="form-label">Url of your story's image</label>
+            <input type="text" class="form-control" id="imageUrl" placeholder="" value="" required="" autocomplete="off" />
+            <small class="text-muted">Not Required</small>
           </div>
 
           <div class="col-button">
@@ -83,9 +87,13 @@
         </form>
 
     </div>
-
   </main>
-  <script src="js/leaflet-quickstart.js" defer></script>
+
+  <footer class="container-fluid bg-light text-center p-3">
+    <p>© 2025 by Boran.</p>
+  </footer>
+
+  <script src ="js/default.js" defer></script>
   <script src="js/script.js" defer></script>
 </body>
 
