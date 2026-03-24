@@ -24,6 +24,7 @@
         <input class="form-control me-2" type="search" placeholder="Search for places by format 'latitude,longitude'..."
           id="search" aria-label="Search" autocomplete="off" />
         <button class="btn btn-outline-success" type="button" id="search-btn">Search</button>
+        <button class="btn btn-outline-success" type="button" id="recommend-travel-btn">Recommend next travel place</button>
       </div>
     </div>
     <div class="container-fluid mt-2">
@@ -70,6 +71,11 @@
             <div class="invalid-feedback" id="description-feedback" hidden>
               Description is required.
             </div>
+            <div class="description-actions">
+              <button type="button" class="btn btn-primary" id="rewrite-description-btn">Rewrite</button>
+              <button type="button" class="btn btn-primary" id="cancel-rewrite-description-btn" disabled>Cancel</button>
+            </div>
+            <small class="text-muted" id="rewrite-status" aria-live="polite"></small>
           </div>
 
           <div class="col-sm-6">

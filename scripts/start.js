@@ -1,4 +1,5 @@
-// !!!! THIS IS NOT WHERE YOUR SI579 ASSIGNMENT IS! GO TO js/scripts.js
+// Static files only. For Rewrite (OpenAI), use `npm start` → scripts/server.js
+// Assignment logic: js/script.js
 
 const { execSync } = require('child_process')
 

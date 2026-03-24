@@ -17,11 +17,52 @@ const addStoryButton = document.querySelector("#add-story");
 const searchButton = document.querySelector("#search-btn");
 const storyForm = document.querySelector("#story-form");
 const cancelButton = document.querySelector("#cancel-add-story");
+const rewriteDescriptionButton = document.querySelector("#rewrite-description-btn");
+const cancelRewriteDescriptionButton = document.querySelector("#cancel-rewrite-description-btn");
+const rewriteStatusEl = document.querySelector("#rewrite-status");
+const recommendTravelButton = document.querySelector("#recommend-travel-btn");
 const markers = [];
+
+let descriptionBeforeRewrite = null;
 
 let tempMarker = null; // marker for the current location
 let storyList = localStorage.getItem('story.list') ? JSON.parse(localStorage.getItem('story.list')) : defaultEntries;
 let coordinate = '';
+
+const escapeHtml = (s) =>
+  String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+/**
+ * Build one entry per visited coordinate for the recommend API.
+ */
+const buildVisitedPlacesPayload = () => {
+  const byCoord = new Map();
+  for (const story of storyList) {
+    const c = String(story.coordinate || '').trim();
+    if (!c) {
+      continue;
+    }
+    if (!byCoord.has(c)) {
+      byCoord.set(c, { coordinate: c, titles: [], descriptions: [] });
+    }
+    const entry = byCoord.get(c);
+    if (story.title) {
+      entry.titles.push(story.title);
+    }
+    if (story.description) {
+      entry.descriptions.push(story.description);
+    }
+  }
+  return [...byCoord.values()].map((p) => ({
+    coordinate: p.coordinate,
+    titles: p.titles,
+    summary: p.descriptions.join(' ').slice(0, 500)
+  }));
+};
 
 /**
  * This is a function
@@ -40,6 +81,13 @@ const renderStory = (coordinate) => {
   const sortedMemories = storyList.filter(story => story.coordinate == coordinate);
   if (sortedMemories.length === 0) {
     storyForm.removeAttribute('hidden');
+    descriptionBeforeRewrite = null;
+    if (cancelRewriteDescriptionButton) {
+      cancelRewriteDescriptionButton.disabled = true;
+    }
+    if (rewriteStatusEl) {
+      rewriteStatusEl.textContent = '';
+    }
     return;
   }
   else {
@@ -94,14 +142,18 @@ const renderMarkers = () => {
  * @param {number} longitude
  * @param {string} name
  */
-const findLocation = (latitude, longitude, name = "") => {
+const findLocation = (latitude, longitude, name = "", detail = '') => {
   map.setView([latitude, longitude], 5);
   if (tempMarker) {
     map.removeLayer(tempMarker);
   }
+  const title = name || `[${latitude}, ${longitude}]`;
+  const detailBlock = detail
+    ? `<p style="margin:0.5em 0 0 0;">${escapeHtml(detail)}</p>`
+    : '';
   tempMarker = L.marker([latitude, longitude])
     .addTo(map)
-    .bindPopup(`<b>${name || `[${latitude}, ${longitude}]`} found!</b>`)
+    .bindPopup(`<b>${escapeHtml(title)} found!</b>${detailBlock}`)
     .openPopup();
 };
 
@@ -124,6 +176,42 @@ searchButton.addEventListener("click", () => {
   }
 });
 
+if (recommendTravelButton) {
+  recommendTravelButton.addEventListener('click', async () => {
+    const places = buildVisitedPlacesPayload();
+    if (places.length === 0) {
+      alert('Add at least one travel story so we can recommend your next place.');
+      return;
+    }
+    const prevLabel = recommendTravelButton.textContent;
+    recommendTravelButton.disabled = true;
+    recommendTravelButton.textContent = 'Recommending...';
+    try {
+      const res = await fetch('/api/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ places })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || res.statusText || 'Recommendation failed');
+      }
+      const { name, latitude, longitude, reason } = data;
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        throw new Error('Invalid coordinates in response');
+      }
+      coordinate = `${latitude},${longitude}`;
+      findLocation(latitude, longitude, name || 'Recommended place', reason || '');
+      renderStory(coordinate);
+    } catch (e) {
+      alert(e.message || 'Recommendation failed');
+    } finally {
+      recommendTravelButton.disabled = false;
+      recommendTravelButton.textContent = prevLabel;
+    }
+  });
+}
+
 /**
  * Cancel adding a new story
  * This also function as deletion of the marker by rendering the markers again
@@ -134,6 +222,67 @@ cancelButton.addEventListener('click', () => {
     tempMarker = null;
   }
   renderMarkers();
+})
+
+const resetRewriteUi = () => {
+  descriptionBeforeRewrite = null;
+  if (cancelRewriteDescriptionButton) {
+    cancelRewriteDescriptionButton.disabled = true;
+  }
+  if (rewriteStatusEl) {
+    rewriteStatusEl.textContent = '';
+  }
+  if (rewriteDescriptionButton) {
+    rewriteDescriptionButton.disabled = false;
+    rewriteDescriptionButton.textContent = 'Rewrite';
+  }
+}
+
+rewriteDescriptionButton.addEventListener('click', async () => {
+  if (!rewriteStatusEl || !rewriteDescriptionButton || !cancelRewriteDescriptionButton) {
+    return;
+  }
+  rewriteStatusEl.textContent = '';
+  const text = descriptionInput.value.trim();
+  if (!text) {
+    alert('Please enter a description to rewrite.');
+    return;
+  }
+  descriptionBeforeRewrite = descriptionInput.value;
+  rewriteDescriptionButton.disabled = true;
+  rewriteDescriptionButton.textContent = 'Polishing...';
+  try {
+    const res = await fetch('/api/rewrite', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || res.statusText || 'Rewrite failed');
+    }
+    if (!data.polished) {
+      throw new Error('No polished text returned');
+    }
+    descriptionInput.value = data.polished;
+    cancelRewriteDescriptionButton.disabled = false;
+    rewriteStatusEl.textContent = 'Polished. Use Cancel to restore your original text.';
+  } catch (e) {
+    alert(e.message || 'Rewrite failed');
+    descriptionBeforeRewrite = null;
+    cancelRewriteDescriptionButton.disabled = true;
+  } finally {
+    rewriteDescriptionButton.disabled = false;
+    rewriteDescriptionButton.textContent = 'Rewrite';
+  }
+});
+
+cancelRewriteDescriptionButton.addEventListener('click', () => {
+  if (descriptionBeforeRewrite === null) {
+    return;
+  }
+  descriptionInput.value = descriptionBeforeRewrite;
+  resetRewriteUi();
 })
 
 /**
@@ -211,6 +360,7 @@ addStoryButton.addEventListener('click', () => {
     dateInput.value = '';
     descriptionInput.value = '';
     imageInput.value = '';
+    resetRewriteUi();
     renderStory(coordinate);
     renderMarkers();
   }
